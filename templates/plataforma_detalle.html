@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Juegos de {{ plataforma_nombre }}{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 3rem; margin-top: 2rem;">
+        <span style="display: inline-block; padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border-radius: 20px; font-weight: 600; margin-bottom: 1rem; border: 1px solid rgba(59, 130, 246, 0.2);">
+            Filtro de Ecosistema Activado
+        </span>
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-main); font-weight: 800; letter-spacing: -1px;">
+            <i class="ph-fill ph-monitor" style="color: #3b82f6;"></i> {{ plataforma_nombre }}
+        </h1>
+        <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+            Catálogo completo de software compatible con esta plataforma.
+        </p>
+    </div>
+
+    <!-- Rejilla de Juegos -->
+    <div class="games-grid">
+        {% if juegos %}
+            {% for juego in juegos %}
+            <article class="game-card">
+                <div class="game-cover" style="background-image: url('{{ juego.imagen_url if juego.imagen_url else 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}');">
+                    <div class="game-rating">
+                        <i class="ph-fill ph-star"></i> {{ juego.avg_rating }}
+                    </div>
+                </div>
+                
+                <div class="game-info">
+                    <h3 class="game-title">{{ juego.titulo }}</h3>
+                    <p class="game-dev">{{ juego.desarrollador }}</p>
+                    
+                    <div class="game-meta" style="margin-top: 1rem;">
+                        <span class="meta-item">
+                            <i class="ph ph-chat-circle-text"></i> {{ juego.total_resenas }}
+                        </span>
+                        <div class="platform-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            {% for p in juego.plataformas_list %}
+                                <span class="platform-badge" style="{% if p == plataforma_nombre %}background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);{% endif %}">{{ p }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('juego_detalle', id=juego.id) }}" class="btn btn-primary" style="margin-top: 1.5rem; width: 100%;">
+                        Ver Reseñas
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: var(--bg-surface); border-radius: 20px; border: var(--glass-border);">
+                <i class="ph ph-ghost" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <h2 style="color: var(--text-main);">Sin Resultados</h2>
+                <p style="color: var(--text-muted);">Actualmente no hay juegos registrados para esta plataforma.</p>
+                <a href="{{ url_for('plataformas') }}" class="btn btn-ghost" style="margin-top: 1rem;">Explorar otras</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Panel de Administrador{% endblock %}
+
+{% block content %}
+<div class="dashboard-header" style="margin-top: 2rem; background: var(--bg-surface); padding: 2rem; border-radius: 16px; border: var(--glass-border); border-left: 4px solid #fbbf24;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="ph-fill ph-shield-check" style="color: #fbbf24;"></i> Panel de Administrador
+    </h1>
+    <p style="color: var(--text-muted);">Administración del catálogo de GG-Reviews. Crea nuevas entidades para los usuarios.</p>
+</div>
+
+<div class="admin-sections" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+    
+    <!-- Zona Desarrolladoras -->
+    <div class="auth-card" style="margin: 0; width: 100%; max-width: 100%;">
+        <div class="auth-header" style="margin-bottom: 1.5rem; text-align: left;">
+            <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-fill ph-buildings" style="color: var(--primary);"></i> Nueva Desarrolladora
+            </h2>
+        </div>
+        
+        <form action="{{ url_for('add_dev') }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label>Nombre de la Empresa</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-briefcase"></i>
+                    <input type="text" name="nombre" placeholder="Ej: Naughty Dog" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>País (Opcional)</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-flag"></i>
+                    <input type="text" name="pais" placeholder="Ej: USA">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;"><i class="ph ph-plus"></i> Añadir Desarrolladora</button>
+        </form>
+    </div>
+    
+    <!-- Zona Plataformas -->
+    <div class="auth-card" style="margin: 0; width: 100%; max-width: 100%;">
+        <div class="auth-header" style="margin-bottom: 1.5rem; text-align: left;">
+            <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-fill ph-monitor" style="color: #3b82f6;"></i> Nueva Plataforma
+            </h2>
+        </div>
+        
+        <form action="{{ url_for('add_platform') }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label>Consola / Plataforma</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-device-mobile"></i>
+                    <input type="text" name="nombre" placeholder="Ej: PlayStation 5" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>URL de Emblema (Opcional)</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-image"></i>
+                    <input type="url" name="imagen_url" placeholder="https://...">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="background: #3b82f6; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3); margin-top: 1rem;"><i class="ph ph-plus"></i> Añadir Plataforma</button>
+        </form>
+    </div>
+
+    <!-- Zona Juegos -->
+    <div class="auth-card" style="margin: 0; width: 100%; max-width: 100%;">
+        <div class="auth-header" style="margin-bottom: 1.5rem; text-align: left;">
+            <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-fill ph-game-controller" style="color: var(--secondary);"></i> Nuevo Videojuego
+            </h2>
+        </div>
+        
+        <form action="{{ url_for('add_game') }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label>Título del Juego</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-text-t"></i>
+                    <input type="text" name="titulo" placeholder="Ej: The Last of Us" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Desarrolladora</label>
+                <div style="position: relative;">
+                    <i class="ph ph-buildings" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.25rem;"></i>
+                    <select name="desarrollador_id" required style="width: 100%; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem 1rem 0.75rem 3rem; color: var(--text-main); font-family: var(--font-body); font-size: 1rem; appearance: none;">
+                        <option value="" disabled selected>-- Elige una --</option>
+                        {% for dev in desarrolladores %}
+                            <option value="{{ dev.id }}">{{ dev.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Si no ves la empresa, añádela primero a la izquierda.</p>
+            </div>
+            
+            <div class="input-group">
+                <label>Plataformas Disponibles</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); max-height: 150px; overflow-y: auto;">
+                    {% for plat in plataformas %}
+                        <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); font-size: 0.9rem; margin-bottom: 0px; cursor: pointer;">
+                            <input type="checkbox" name="plataformas" value="{{ plat.id }}" style="accent-color: var(--secondary); width: 1.1rem; height: 1.1rem;">
+                            {{ plat.nombre }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>URL de Portada / Imagen</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-image"></i>
+                    <input type="url" name="imagen_url" placeholder="https://ejemplo.com/foto.jpg">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="background: var(--secondary); box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3); margin-top: auto;"><i class="ph ph-plus"></i> Registrar Videojuego</button>
+        </form>
+    </div>
+</div>
+
+<!-- Gestión de Edición de Juegos Existentes -->
+<div class="admin-games-edit-section" style="margin-top: 2rem;">
+    <div class="auth-card" style="margin: 0; width: 100%; max-width: 100%;">
+        <div class="auth-header" style="margin-bottom: 1.5rem; text-align: left;">
+            <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-fill ph-pencil-simple" style="color: var(--secondary);"></i> Editar Títulos y Portadas
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Catálogo global. Modifica la compañía o la imagen oficial.</p>
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto; padding-right: 1rem;">
+            {% for v in videojuegos %}
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 40px; height: 40px; background: var(--bg-surface-hover); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: var(--glass-border);">
+                            <i class="ph ph-game-controller"></i>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: var(--text-main);">{{ v.titulo }}</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">{{ v.desarrollador }}</p>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('edit_game', id=v.id) }}" class="btn btn-sm" style="background: rgba(236, 72, 153, 0.2); color: var(--secondary); border: 1px solid var(--secondary);">
+                        <i class="ph ph-pencil"></i> Modificar
+                    </a>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <p>El catálogo de juegos está vacío.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Gestión de Edición de Plataformas Existentes -->
+<div class="admin-platforms-edit-section" style="margin-top: 2rem;">
+    <div class="auth-card" style="margin: 0; width: 100%; max-width: 100%;">
+        <div class="auth-header" style="margin-bottom: 1.5rem; text-align: left;">
+            <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-fill ph-monitor" style="color: #3b82f6;"></i> Editar Fotos de Ecosistemas
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Catálogo global. Modifica su nombre o su emblema oficial.</p>
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto; padding-right: 1rem;">
+            {% for p in plataformas %}
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 40px; height: 40px; background: var(--bg-surface-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: var(--glass-border); overflow: hidden;">
+                            {% if p.imagen_url %}
+                                <div style="width: 100%; height: 100%; background-image: url('{{ p.imagen_url }}'); background-size: cover; background-position: center;"></div>
+                            {% else %}
+                                <i class="ph ph-device-mobile" style="color: #3b82f6;"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: var(--text-main);">{{ p.nombre }}</p>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('edit_platform', id=p.id) }}" class="btn btn-sm" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6;">
+                        <i class="ph ph-pencil"></i> Modificar Emblema
+                    </a>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <p>El catálogo de consolas está vacío.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="admin-users-section" style="margin-top: 2rem;">
+    <div class="auth-card" style="margin: 0; width: 100%; max-width: 100%;">
+        <div class="auth-header" style="margin-bottom: 1.5rem; text-align: left;">
+            <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-fill ph-users" style="color: #10b981;"></i> Gestión de Rangos & Usuarios
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Lista de usuarios inscritos en la plataforma que no poseen rango administrativo. Otorga rangos con responsabilidad.</p>
+        </div>
+
+        <div style="max-height: 300px; overflow-y: auto; padding-right: 1rem;">
+            {% for u in usuarios %}
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 40px; height: 40px; background: var(--bg-surface-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: var(--glass-border);">
+                            {{ u.username[0]|upper }}
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: var(--text-main);">{{ u.username }}</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">{{ u.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <form action="{{ url_for('promote_user', id=u.id) }}" method="POST" onsubmit="return confirm('¿Otorgar derechos de Administrador total a {{ u.username }}?');">
+                        <button type="submit" class="btn btn-sm" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;">
+                            <i class="ph ph-trend-up"></i> Ascender a Admin
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <p>No hay usuarios normales en la base de datos.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

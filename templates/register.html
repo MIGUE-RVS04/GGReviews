@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Registro{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="ph-fill ph-user-plus auth-icon"></i>
+            <h2>Únete a GG-Reviews</h2>
+            <p>Crea tu cuenta para compartir tus experiencias</p>
+        </div>
+        
+        <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label for="username">Nombre de Usuario</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-user"></i>
+                    <input type="text" id="username" name="username" placeholder="Elegir un usuario único" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="tu@correo.com" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-lock-key"></i>
+                    <input type="password" id="password" name="password" placeholder="Crear una contraseña segura" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Registrarme</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>¿Ya tienes una cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

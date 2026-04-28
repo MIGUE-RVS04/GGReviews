@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Panel de {{ session.username }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-header" style="margin-top: 2rem; background: var(--bg-surface); padding: 3rem 2rem; border-radius: 16px; border: var(--glass-border); display: flex; align-items: center; gap: 2rem;">
+    <div class="avatar" style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; color: white;">
+        {{ session.username[0]|upper }}
+    </div>
+    <div class="user-info">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Hola, {{ session.username }}</h1>
+        <p style="color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-envelope"></i> {{ usuario.email }}</p>
+    </div>
+</div>
+
+<div class="dashboard-reviews" style="margin-top: 3rem;">
+    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="ph-fill ph-chat-circle-text" style="color: var(--primary);"></i> Tus Reseñas Publicadas
+    </h2>
+
+    <div class="reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for r in resenas %}
+            <div class="review-card blur-bg" style="background: var(--bg-surface-hover); border: var(--glass-border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; position: relative;">
+                
+                <h3 style="margin-bottom: 0.25rem;">
+                    <a href="{{ url_for('juego_detalle', id=r.videojuego_id) }}" style="color: var(--primary);">{{ r.titulo }}</a>
+                </h3>
+                
+                <div class="review-score" style="display: flex; gap: 0.2rem; align-items: center; margin-bottom: 1rem;">
+                    {% for i in range(1, 6) %}
+                        {% if i <= r.calificacion %}
+                            <i class="ph-fill ph-star" style="color: #fbbf24;"></i>
+                        {% else %}
+                            <i class="ph ph-star" style="color: var(--text-muted);"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; flex: 1; padding-bottom: 1.5rem;">
+                    "{{ r.comentario }}"
+                </p>
+
+                <div class="review-actions" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; display: flex; justify-content: flex-end;">
+                    <!-- Botón de eliminar con confirmación de JS pura -->
+                    <form action="{{ url_for('delete_review', id=r.id) }}" method="POST" onsubmit="return confirm('¿De verdad quieres eliminar tu reseña sobre {{ r.titulo }}?');">
+                        <button type="submit" class="btn btn-sm btn-ghost" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.2);">
+                            <i class="ph ph-trash"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 4rem; background: var(--bg-surface); border-radius: 16px;">
+                <i class="ph ph-mask-sad" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p style="font-size: 1.2rem;">Aún no has escrito ninguna reseña.</p>
+                <a href="{{ url_for('home') }}" class="btn btn-primary" style="margin-top: 1.5rem;">Explorar Juegos</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

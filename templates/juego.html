@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | {{ juego.titulo }}{% endblock %}
+
+{% block content %}
+<div class="game-detail-container" style="margin-top: 2rem;">
+    <!-- Detalles Header -->
+    <div class="detail-header" style="display: flex; gap: 2rem; background: var(--bg-surface); padding: 2rem; border-radius: 16px; border: var(--glass-border); margin-bottom: 2rem;">
+        <div class="detail-cover" style="width: 200px; height: 280px; background-image: url('{{ juego.imagen_url if juego.imagen_url else 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}'); background-size: cover; background-position: center; border-radius: 12px; box-shadow: var(--shadow-soft);"></div>
+        <div class="detail-info" style="flex: 1;">
+            <h1 style="font-size: 3rem; margin-bottom: 0.5rem; color: var(--text-main);">{{ juego.titulo }}</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem;">Desarrollado por: <strong>{{ juego.desarrollador }}</strong></p>
+            
+            <div class="game-platforms" style="margin-bottom: 2rem;">
+                {% for plat in juego.plataformas %}
+                    <span class="platform-badge" style="font-size: 0.9rem; padding: 0.25rem 0.75rem;">{{ plat }}</span>
+                {% else %}
+                    <span class="platform-badge">PC</span> <!-- Fallback -->
+                {% endfor %}
+            </div>
+
+            <div class="detail-rating" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.4); padding: 0.5rem 1.5rem; border-radius: 99px; font-size: 1.5rem; font-weight: bold; border: var(--glass-border);">
+                <i class="ph-fill ph-star" style="color: #fbbf24;"></i> {{ juego.avg_rating }}
+                <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: normal; margin-left: 0.5rem;">({{ resenas|length }} reseñas)</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
+        <!-- Lista de reviews -->
+        <div class="reviews-section">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Reseñas de la comunidad</h3>
+            
+            <div class="reviews-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                {% for r in resenas %}
+                    <div class="review-card" style="background: var(--bg-surface); padding: 1.5rem; border-radius: 12px; border: var(--glass-border);">
+                        <div class="review-header" style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <div class="reviewer-info" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                    {{ r.username[0]|upper }}
+                                </div>
+                                <strong style="color: var(--text-main);">{{ r.username }}</strong>
+                            </div>
+                            <div class="review-score" style="display: flex; gap: 0.2rem; align-items: center; background: rgba(255,255,255,0.05); padding: 0.25rem 0.5rem; border-radius: 6px;">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= r.calificacion %}
+                                        <i class="ph-fill ph-star" style="color: #fbbf24;"></i>
+                                    {% else %}
+                                        <i class="ph ph-star" style="color: var(--text-muted);"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p style="color: var(--text-muted); line-height: 1.6;">{{ r.comentario }}</p>
+                        
+                        {% if session.get('is_admin') %}
+                        <!-- Botón Admin (Bypass Moderación) -->
+                        <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; text-align: right;">
+                            <form action="{{ url_for('admin_delete_review', game_id=juego.id, review_id=r.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('ATENCIÓN (Admin): ¿Borrar forzosamente el comentario de este usuario?');">
+                                <button type="submit" class="btn btn-sm btn-ghost" style="color:#ef4444; border-color: rgba(239, 68, 68, 0.2);"><i class="ph ph-trash"></i> Moderar</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted); background: var(--bg-surface); border-radius: 12px;">
+                        <i class="ph ph-chat-circle-dots" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                        <p>Aún no hay reseñas. ¡Sé el primero en opinar!</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Formulario de nueva review -->
+        <div class="add-review-section" style="background: var(--bg-surface-hover); padding: 2rem; border-radius: 16px; border: var(--glass-border); position: sticky; top: 100px;">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem;">📝 Deja tu opinión</h3>
+            
+            {% if 'user_id' in session %}
+                <form action="{{ url_for('add_review', id=juego.id) }}" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="input-group">
+                        <label>Tu Calificación (1 al 5)</label>
+                        <select name="calificacion" required style="width: 100%; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem; color: var(--text-main); font-family: var(--font-body); font-size: 1rem;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5/5) Increíble</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5) Muy Bueno</option>
+                            <option value="3" selected>⭐⭐⭐ (3/5) Promedio</option>
+                            <option value="2">⭐⭐ (2/5) Deficiente</option>
+                            <option value="1">⭐ (1/5) Malísimo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Tu Comentario</label>
+                        <textarea name="comentario" rows="5" placeholder="¿Qué te pareció el juego?" style="width: 100%; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem; color: var(--text-main); font-family: var(--font-body); font-size: 1rem; resize: vertical;" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">Publicar Reseña</button>
+                </form>
+            {% else %}
+                <div style="text-align: center; padding: 1rem 0;">
+                    <i class="ph ph-lock-key" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Debes iniciar sesión para publicar una reseña.</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary" style="width: 100%;">Iniciar Sesión</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

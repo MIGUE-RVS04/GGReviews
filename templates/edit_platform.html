@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Editar {{ plataforma.nombre }}{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card" style="max-width: 600px;">
+        <div class="auth-header">
+            <h2><i class="ph-fill ph-pencil-simple" style="color: #3b82f6;"></i> Modificar Plataforma</h2>
+            <p>Alteración de ecosistema "{{ plataforma.nombre }}"</p>
+        </div>
+
+        <!-- Previsualizar Logo -->
+        <div style="margin-bottom: 2rem; display: flex; justify-content: center;">
+            {% if plataforma.imagen_url %}
+            <div style="width: 120px; height: 120px; border-radius: 50%; background-image: url('{{ plataforma.imagen_url }}'); background-size: cover; background-position: center; border: 4px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);"></div>
+            {% else %}
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: rgba(59, 130, 246, 0.1); border: 4px solid rgba(59, 130, 246, 0.2); display: flex; justify-content: center; align-items: center;">
+                <i class="ph-fill ph-device-mobile" style="font-size: 4rem; color: #3b82f6;"></i>
+            </div>
+            {% endif %}
+        </div>
+
+        <form action="{{ url_for('edit_platform', id=plataforma.id) }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label>Nombre Oficial</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-text-t"></i>
+                    <input type="text" name="nombre" value="{{ plataforma.nombre }}" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>URL del Logo (Opcional)</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-image"></i>
+                    <input type="url" name="imagen_url" value="{{ plataforma.imagen_url or '' }}" placeholder="https://...">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="background: #3b82f6;"><i class="ph ph-floppy-disk"></i> Actualizar Consola</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost" style="margin-top: 1rem; text-align: center;"><i class="ph ph-arrow-left"></i> Volver</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

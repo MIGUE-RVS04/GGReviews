@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Inicio{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Descubre tu próximo juego favorito</h1>
+        <p class="hero-subtitle">Lee opiniones reales de la comunidad y comparte tus propias experiencias sobre miles de títulos.</p>
+        <div class="search-bar">
+            <i class="ph ph-magnifying-glass search-icon"></i>
+            <input type="text" placeholder="Buscar juegos, desarrolladores, plataformas...">
+            <button class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+</section>
+
+<section class="games-section">
+    <div class="section-header">
+        <h2 class="section-title">Juegos Destacados</h2>
+        <a href="#" class="view-all">Ver todos <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <div class="games-grid">
+        {% if juegos %}
+            {% for juego in juegos %}
+            <article class="game-card">
+                <div class="game-cover" style="background-image: url('{{ juego.imagen_url if juego.imagen_url else 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}');">
+                    <div class="game-rating">
+                        <i class="ph-fill ph-star"></i> {{ juego.avg_rating }}
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">{{ juego.titulo }}</h3>
+                    <p class="game-dev">{{ juego.desarrollador }}</p>
+                    <div class="game-platforms">
+                        {% for plat in juego.plataformas_list %}
+                            <span class="platform-badge">{{ plat }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <span class="reviews-count">{{ juego.total_resenas }} Reseñas</span>
+                        <a href="{{ url_for('juego_detalle', id=juego.id) }}" class="btn btn-sm btn-ghost">Ver / Reseñar</a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 3rem;">
+                <i class="ph ph-database" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <p>No se encontraron juegos en la base de datos.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

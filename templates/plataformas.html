@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Hub de Plataformas{% endblock %}
+
+{% block content %}
+<div class="platforms-container" style="padding-top: 2rem;">
+
+    <div style="text-align: center; margin-bottom: 4rem;">
+        <h1
+            style="font-size: 3.5rem; margin-bottom: 1rem; color: var(--text-main); font-weight: 800; letter-spacing: -1px;">
+            <i class="ph-fill ph-monitor" style="color: #3b82f6;"></i> Ecosistemas
+        </h1>
+        <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+            Explora las diferentes consolas, sistemas y tecnologías. Descubre el software disponible para tu plataforma
+            favorita.
+        </p>
+    </div>
+
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
+        {% for p in plataformas %}
+        <a href="{{ url_for('plataforma_detalle', id=p.id) }}" style="text-decoration: none;">
+            <div class="auth-card"
+                style="margin: 0; padding: 2rem; border-radius: 20px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255,255,255,0.05); background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(10,10,10,0.9) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; position: relative; overflow: hidden;"
+                onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='rgba(59, 130, 246, 0.5)'; this.style.boxShadow='0 20px 40px rgba(59, 130, 246, 0.15)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.boxShadow='none';">
+
+                <!-- Background decor -->
+                <div
+                    style="position: absolute; width: 150px; height: 150px; background: rgba(59, 130, 246, 0.1); filter: blur(50px); border-radius: 50%; top: -50px; right: -50px;">
+                </div>
+
+                <div
+                    style="width: 80px; height: 80px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(59, 130, 246, 0.2); overflow: hidden;">
+                    {% if p.imagen_url %}
+                        <div style="width: 100%; height: 100%; background-image: url('{{ p.imagen_url }}'); background-size: cover; background-position: center;"></div>
+                    {% else %}
+                        <i class="ph-fill ph-device-mobile" style="font-size: 3rem; color: #3b82f6;"></i>
+                    {% endif %}
+                </div>
+
+                <h2
+                    style="font-size: 1.5rem; color: var(--text-main); font-weight: bold; text-align: center; margin: 0;">
+                    {{ p.nombre }}</h2>
+
+                <span class="platform-badge"
+                    style="background: rgba(255,255,255,0.1); color: var(--text-muted); font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 20px;">
+                    <i class="ph-fill ph-game-controller"></i> {{ p.total_juegos }} Juegos Disponibles
+                </span>
+            </div>
+        </a>
+        {% else %}
+        <div
+            style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: var(--bg-surface); border-radius: 20px; border: var(--glass-border);">
+            <i class="ph ph-ghost" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h2 style="color: var(--text-main);">Sin Ecosistemas</h2>
+            <p style="color: var(--text-muted);">El Administrador aún no ha registrado consolas.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

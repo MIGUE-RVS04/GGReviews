@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}GG-Reviews | Editar {{ juego.titulo }}{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card" style="max-width: 600px;">
+        <div class="auth-header">
+            <h2><i class="ph-fill ph-pencil-simple" style="color: var(--secondary);"></i> Modificar Videojuego</h2>
+            <p>Alteración de base de datos para "{{ juego.titulo }}"</p>
+        </div>
+
+        <!-- Previsualizar Portada -->
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
+            <div style="width: 150px; height: 210px; background-image: url('{{ juego.imagen_url if juego.imagen_url else 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}'); background-size: cover; background-position: center; border-radius: 8px; border: var(--glass-border); box-shadow: var(--shadow-soft);"></div>
+        </div>
+
+        <form action="{{ url_for('edit_game', id=juego.id) }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label>Título del Juego</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-text-t"></i>
+                    <input type="text" name="titulo" value="{{ juego.titulo }}" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>URL de Portada</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-image"></i>
+                    <input type="url" name="imagen_url" value="{{ juego.imagen_url or '' }}" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Desarrolladora (Empresa)</label>
+                <div style="position: relative;">
+                    <i class="ph ph-buildings" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.25rem;"></i>
+                    <select name="desarrollador_id" required style="width: 100%; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem 1rem 0.75rem 3rem; color: var(--text-main); font-family: var(--font-body); font-size: 1rem; appearance: none;">
+                        {% for dev in desarrolladores %}
+                            <option value="{{ dev.id }}" {% if dev.id == juego.desarrollador_id %}selected{% endif %}>{{ dev.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Plataformas (Compatibilidad)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); max-height: 180px; overflow-y: auto;">
+                    {% for plat in plataformas %}
+                        <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); font-size: 0.9rem; margin-bottom: 0px; cursor: pointer;">
+                            <input type="checkbox" name="plataformas" value="{{ plat.id }}" style="accent-color: var(--secondary); width: 1.1rem; height: 1.1rem;" {% if plat.id in juego_plats %}checked{% endif %}>
+                            {{ plat.nombre }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="background: var(--secondary);"><i class="ph ph-floppy-disk"></i> Guardar Cambios</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost" style="margin-top: 1rem; text-align: center;"><i class="ph ph-arrow-left"></i> Volver</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
