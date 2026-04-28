@@ -67,13 +67,13 @@ python seed.py
 
 # 2. Agregar soporte para permisos de administrador
 # Nota: Este script promoverá automáticamente al PRIMER usuario registrado a administrador.
-python upgrade_admin.py
+python upgrade_admin.py (No obligatorio de hacer)
 
 # 3. Agregar soporte para imágenes (URLs) en los videojuegos
-python upgrade_image.py
+python upgrade_image.py (No obligatorio de hacer)
 
 # 4. Agregar soporte para imágenes (URLs) en las plataformas
-python upgrade_plat_img.py
+python upgrade_plat_img.py (No obligatorio de hacer)
 ```
 
 ### 5. Ejecutar la aplicación
